@@ -26,6 +26,7 @@ Thumbs.db
 
 # Terraform
 .terraform/
+.terraform/**
 *.tfstate
 *.tfstate.backup
 *.tfvars
@@ -37,6 +38,6 @@ coverage/
 # Build
 build/
 dist/
-```
 
 *-key
+terraform-key.pub
