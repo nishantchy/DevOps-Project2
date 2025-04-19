@@ -1,80 +1,137 @@
-# Express DevOps Demo
+# DevOps Project Two
 
-A simple Express.js application designed for learning DevOps concepts.
+A Node.js application with complete CI/CD pipeline and infrastructure as code.
 
 ## Features
 
 - Express.js REST API
-- PostgreSQL database integration
 - Docker containerization
-- NGINX reverse proxy
 - GitHub Actions CI/CD pipeline
 - Terraform infrastructure as code for AWS deployment
+- Automated testing and deployment
+- Infrastructure provisioning
+
+## Architecture
+
+- **Frontend/Backend**: Node.js Express application
+- **Infrastructure**: AWS EC2 with Docker
+- **CI/CD**: GitHub Actions workflow
+- **IaC**: Terraform for AWS resource provisioning
 
 ## Prerequisites
 
 - Node.js 18+
-- pnpm
+- pnpm package manager
 - Docker and Docker Compose
-- Terraform (for deployment)
-- AWS CLI (configured with credentials)
+- Terraform
+- AWS account with configured credentials
+- GitHub account
 
 ## Development Setup
 
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/express-devops-demo.git
-   cd express-devops-demo
+   git clone https://github.com/nishantchy/DevOps-Project2.git
+   cd DevOps-Project2
    ```
 
-2. Run the setup script:
+2. Install dependencies:
 
    ```bash
-   chmod +x scripts/setup.sh
-   ./scripts/setup.sh
+   pnpm install
    ```
 
-3. Start the development environment:
+3. Run locally:
+   ```bash
+   pnpm dev
+   ```
+
+## Infrastructure Setup
+
+The project uses Terraform to provision AWS infrastructure:
+
+1. Navigate to the terraform directory:
 
    ```bash
-   docker-compose up
+   cd terraform
    ```
 
-4. Access the API at http://localhost:80
+2. Initialize Terraform:
 
-## Testing
+   ```bash
+   terraform init
+   ```
 
-Run tests with:
+3. Generate an SSH key pair (if not already done):
 
-```bash
-pnpm test
+   ```bash
+   ssh-keygen -t rsa -b 2048 -f terraform-key
+   ```
+
+4. Apply Terraform configuration:
+
+   ```bash
+   terraform apply -var="ssh_public_key=$(cat terraform-key.pub)"
+   ```
+
+5. After deployment, Terraform will output the EC2 instance's public IP address.
+
+## CI/CD Pipeline
+
+The project includes a GitHub Actions workflow that:
+
+1. Runs tests on every pull request and push to main
+2. Deploys infrastructure and application when code is merged to main
+
+### GitHub Secrets Required
+
+- `AWS_ACCESS_KEY_ID`: Your AWS access key
+- `AWS_SECRET_ACCESS_KEY`: Your AWS secret key
+- `SSH_PUBLIC_KEY`: Content of your SSH public key
+
+## File Structure
+
+- `.github/workflows/`: CI/CD pipeline configuration
+- `src/`: Application source code
+- `tests/`: Test files
+- `terraform/`: Infrastructure as code
+  - `main.tf`: Main Terraform configuration
+  - `variables.tf`: Variable definitions
+- `docker-compose.yml`: Local development setup
+- `Dockerfile`: Application containerization
+
+## Important Files
+
+- `terraform.tfstate`: Tracks the state of your infrastructure (never delete)
+- `terraform-key`: SSH private key for EC2 access (keep secure, not committed to git)
+- `terraform-key.pub`: SSH public key for EC2 access
+
+## Deployment Process
+
+1. Changes are pushed to GitHub
+2. GitHub Actions runs tests
+3. If tests pass and the branch is main, Terraform creates/updates AWS infrastructure
+4. The application is deployed to the EC2 instance
+
+## Accessing the Application
+
+After deployment, access the application at:
+
+```
+http://<EC2-Public-IP>
 ```
 
-## Deployment
+You can find the IP address in the Terraform output or AWS Console.
 
-### Manual Deployment
-
-```bash
-chmod +x scripts/deploy.sh
-./scripts/deploy.sh
-```
-
-### CI/CD Deployment
-
-Push changes to the main branch to trigger the GitHub Actions workflow.
-
-## Infrastructure
-
-To deploy the infrastructure manually:
+## SSH Access to EC2
 
 ```bash
-cd terraform
-terraform init
-terraform plan
-terraform apply
+ssh -i terraform-key ec2-user@<EC2-Public-IP>
 ```
 
-## License
+## Project Maintenance
 
-w
+- To update infrastructure: Modify Terraform files and push changes
+- To update application: Modify source code and push changes
+- To destroy infrastructure: Run `terraform destroy`
