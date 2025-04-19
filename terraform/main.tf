@@ -4,7 +4,7 @@ provider "aws" {
 
 # Security group for the EC2 instance
 resource "aws_security_group" "app_sg" {
-  name        = "express-app-sg"
+  name        = "${var.resource_prefix}express-app-sg"
   description = "Allow HTTP and SSH traffic"
 
   # Allow HTTP traffic
@@ -34,13 +34,13 @@ resource "aws_security_group" "app_sg" {
   }
 
   tags = {
-    Name = "express-app-sg"
+    Name = "${var.resource_prefix}express-app-sg"
   }
 }
 
 # SSH key for EC2 access
 resource "aws_key_pair" "deployer" {
-  key_name   = "express-app-key"
+  key_name   = "${var.resource_prefix}express-app-key"
   public_key = var.ssh_public_key
 }
 
@@ -78,7 +78,7 @@ resource "aws_instance" "app_server" {
               EOF
   
   tags = {
-    Name = "express-app-server"
+    Name = "${var.resource_prefix}express-app-server"
   }
 }
 

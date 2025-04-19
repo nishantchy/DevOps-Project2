@@ -27,3 +27,9 @@ variable "ssh_public_key" {
   type        = string
   default     = ""
 }
+
+variable "resource_prefix" {
+  description = "Prefix to add to resource names to avoid conflicts"
+  type        = string
+  default     = ""
+}
