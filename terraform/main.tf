@@ -41,7 +41,7 @@ resource "aws_security_group" "app_sg" {
 # SSH key for EC2 access
 resource "aws_key_pair" "deployer" {
   key_name   = "express-app-key"
-  public_key = file(var.ssh_key_path)
+  public_key = var.ssh_public_key
 }
 
 # EC2 instance
